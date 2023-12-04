@@ -1,22 +1,37 @@
 import numpy as np
 from mealpy.optimizer import Optimizer
 
-T = 1000
-N = 5
 optimizer = Optimizer()
 
-lowerbound, upperbound = 0, 500
+lowerbound = [0, 0]
+upperbound = [50, 5]
+
+T = 1000
+N = 500
+Dim = len(lowerbound)
 
 
-def fitness_function(coordinates):
-    return -(5 * coordinates**2 - 6 * coordinates - 6)
+def not_in_range(lowerbound, upperbound, x):
+    if 2 * x[0] + 5 * x[1] > 98:
+        return True
+
+    for i in range(0, len(lowerbound)):
+        if not lowerbound[i] <= x[i] <= upperbound[i]:
+            return True
+
+    return False
 
 
-population = np.random.uniform(lowerbound, upperbound, N)
-print(population)
+def fitness_function(x):
+    ans = 2 * x[0] ** 2 - 7 * x[1] ** 2 + 12 * x[0] * x[1]
+    return ans
+
+
+population = np.transpose(
+    [np.random.uniform(lowerbound[i], upperbound[i], N) for i in range(Dim)]
+)
 
 t = 0
-
 while t != T:
     # Initialize the best rabbit location (global best)
     best_rabbit_location = None
@@ -29,6 +44,7 @@ while t != T:
         best_rabbit_fitness = fitness_values[best_hawk_index]
 
     population_new = []
+
     i = 0
     while i != N:
         E0 = 2 * np.random.uniform() - 1
@@ -39,15 +55,20 @@ while t != T:
         if np.abs(E) >= 1:
             if np.random.rand() >= 0.5:  # perch based on other family members
                 X_rand = population[np.random.randint(0, N)]
+
                 pos_new = X_rand - np.random.uniform() * np.abs(
                     X_rand - 2 * np.random.uniform() * population[i]
                 )
+
             else:
-                x_mean = np.mean(population)
+                x_mean = np.mean([x for x in np.transpose(population)])
                 pos_new = (best_rabbit_location - x_mean) - np.random.uniform() * (
-                    lowerbound + np.random.uniform() * (upperbound - lowerbound)
+                    np.array(lowerbound)
+                    + np.random.uniform()
+                    * (np.array(upperbound) - np.array(lowerbound))
                 )
-            if not lowerbound <= pos_new <= upperbound:
+
+            if not_in_range(lowerbound, upperbound, pos_new):
                 continue
             population_new.append(pos_new)
         else:
@@ -63,7 +84,7 @@ while t != T:
                         best_rabbit_location - population[i]
                     )
 
-                if not lowerbound <= pos_new <= upperbound:
+                if not_in_range(lowerbound, upperbound, pos_new):
                     continue
                 population_new.append(pos_new)
 
@@ -91,15 +112,16 @@ while t != T:
                 else:
                     pos_new = population[i]
 
-                if not lowerbound <= pos_new <= upperbound:
+                if not_in_range(lowerbound, upperbound, pos_new):
                     continue
 
                 population_new.append(pos_new)
         i += 1
-    print(population_new)
     population = population_new
+    print(population_new)
     t += 1
 
 
 print("best rabbit location = " + str(best_rabbit_location))
 print("best rabbit fitness = " + str(best_rabbit_fitness))
+print()
