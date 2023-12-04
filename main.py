@@ -2,13 +2,16 @@ import numpy as np
 
 # Define the fitness function to be optimized (replace with your own)
 def fitness_function(x):
+    print(x)
+    x1 = x[0]
+    x2 = x[1]
     # This is a sample fitness function; replace it with your own objective function.
-    return sum(x**2)  # Example: minimize the sum of squares
+    return 9.82*x1*x2 - 2*x1*x1  # Example: minimize the sum of squares
 
 # Initialize parameters
 population_size = 20
 max_iterations = 100
-search_space_dim = 5  # Adjust based on your problem's dimensionality
+search_space_dim = 2  # Adjust based on your problem's dimensionality
 alpha = 0.1  # Exploration coefficient
 beta = 1.5   # Exploitation coefficient
 

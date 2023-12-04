@@ -1,4 +1,5 @@
 import numpy as np
+
 from scipy.optimize import minimize
 
 # Define the objective function to be minimized (replace with your own)
