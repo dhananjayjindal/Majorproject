@@ -4,15 +4,35 @@ from mealpy.optimizer import Optimizer
 optimizer = Optimizer()
 
 lowerbound = [0, 0]
-upperbound = [50, 5]
+upperbound = [10, 10]
 
-T = 1000
-N = 500
+T = 100
+N = 1000
+# optimum_given = float("inf")
 Dim = len(lowerbound)
 
 
+def franctional_constraints(a, b, tpe, value):
+    if b == 0:
+        return False
+    if tpe == "le":
+        return (a / b) > value
+    if tpe == "ge":
+        return (a / b) < value
+    if tpe == "g":
+        return (a / b) <= value
+    if tpe == "l":
+        return (a / b) >= value
+
+
 def not_in_range(lowerbound, upperbound, x):
-    if 2 * x[0] + 5 * x[1] > 98:
+    c_1_n = 4 * x[0] - 2 * x[1]
+    c_1_d = 1
+    c_2_n = 3 * x[0] + 5 * x[1]
+    c_2_d = 1
+    if franctional_constraints(c_1_n, c_1_d, "le", 20) or franctional_constraints(
+        c_2_n, c_2_d, "le", 25
+    ):
         return True
 
     for i in range(0, len(lowerbound)):
@@ -23,8 +43,11 @@ def not_in_range(lowerbound, upperbound, x):
 
 
 def fitness_function(x):
-    ans = 2 * x[0] ** 2 - 7 * x[1] ** 2 + 12 * x[0] * x[1]
-    return ans
+    a = 6 * x[0] + 3 * x[1] + 6
+    b = 5 * x[0] + 2 * x[1] + 5
+    if b == 0:
+        return False
+    return a / b
 
 
 population = np.transpose(
@@ -105,6 +128,11 @@ while t != T:
                 S = np.random.uniform(lowerbound, upperbound)
                 Z = Y + S * LF_D
 
+                fitness_of_Y = fitness_function(Y)
+                fitness_of_Z = fitness_function(Z)
+                if not fitness_of_Y or not fitness_of_Z:
+                    continue
+
                 if fitness_function(Y) < fitness_values[i]:
                     pos_new = Y
                 elif fitness_function(Z) < fitness_values[i]:
@@ -118,10 +146,17 @@ while t != T:
                 population_new.append(pos_new)
         i += 1
     population = population_new
-    print(population_new)
+    # if np.abs(best_rabbit_fitness - optimum_given) < 0.001:
+    #     break
+    print(t)
     t += 1
 
+formatted_best_rabbit_location = []
+for e in best_rabbit_location:
+    formatted_result = "{:.3f}".format(e)
+    formatted_best_rabbit_location.append(formatted_result)
 
-print("best rabbit location = " + str(best_rabbit_location))
-print("best rabbit fitness = " + str(best_rabbit_fitness))
-print()
+formatted_best_rabbit_fitness = "{:.3f}".format(best_rabbit_fitness)
+print("*********************************************************************")
+print("best rabbit location = " + str(formatted_best_rabbit_location))
+print("best rabbit fitness = " + str(formatted_best_rabbit_fitness))
