@@ -3,8 +3,8 @@ from mealpy.optimizer import Optimizer
 
 optimizer = Optimizer()
 
-lowerbound = [0, 0]
-upperbound = [10, 10]
+lowerbound = [0, 0,0]
+upperbound = [1, 1,1]
 
 T = 100
 N = 1000
@@ -26,13 +26,14 @@ def franctional_constraints(a, b, tpe, value):
 
 
 def not_in_range(lowerbound, upperbound, x):
-    c_1_n = 4 * x[0] - 2 * x[1]
+    c_1_n = 0.1073*x[0] + 0.0737*x[1] + 0.0627*x[2]
     c_1_d = 1
-    c_2_n = 3 * x[0] + 5 * x[1]
+    c_2_n = x[0] +  x[1] + x[2]
     c_2_d = 1
-    if franctional_constraints(c_1_n, c_1_d, "le", 20) or franctional_constraints(
-        c_2_n, c_2_d, "le", 25
-    ):
+    c_3_n = x[0] +  x[1] + x[2]
+    c_3_d = 1
+    if franctional_constraints(c_1_n, c_1_d, "ge", .065) or franctional_constraints(
+        c_2_n, c_2_d, "le", 1  )or franctional_constraints(c_3_n, c_3_d, "ge", 0.95):
         return True
 
     for i in range(0, len(lowerbound)):
@@ -43,11 +44,11 @@ def not_in_range(lowerbound, upperbound, x):
 
 
 def fitness_function(x):
-    a = 6 * x[0] + 3 * x[1] + 6
-    b = 5 * x[0] + 2 * x[1] + 5
+    a = 0.02778*x[0]*x[0] + (2 * 0.00387*x[0]*x[1]) + (2 * 0.00021*x[0]*x[2]) + 0.01112*(x[1]**2) - (2 * 0.00020*x[1]*x[2]) + 0.00115*(x[2]**2)
+    b = 1
     if b == 0:
         return False
-    return a / b
+    return -a / b
 
 
 population = np.transpose(
