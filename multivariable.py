@@ -6,7 +6,7 @@ optimizer = Optimizer()
 lowerbound = [0, 0,0]
 upperbound = [1, 1,1]
 
-T = 100
+T = 5000
 N = 1000
 # optimum_given = float("inf")
 Dim = len(lowerbound)
@@ -33,7 +33,7 @@ def not_in_range(lowerbound, upperbound, x):
     c_3_n = x[0] +  x[1] + x[2]
     c_3_d = 1
     if franctional_constraints(c_1_n, c_1_d, "ge", .065) or franctional_constraints(
-        c_2_n, c_2_d, "le", 1  )or franctional_constraints(c_3_n, c_3_d, "ge", 0.95):
+        c_2_n, c_2_d, "ge", 0.95  ) or franctional_constraints(c_3_n, c_3_d, "le", 1.05):
         return True
 
     for i in range(0, len(lowerbound)):
@@ -161,3 +161,10 @@ formatted_best_rabbit_fitness = "{:.3f}".format(best_rabbit_fitness)
 print("*********************************************************************")
 print("best rabbit location = " + str(formatted_best_rabbit_location))
 print("best rabbit fitness = " + str(formatted_best_rabbit_fitness))
+
+
+# # Assuming result is your NumPy array
+# result = np.array([formatted_best_rabbit_location])
+
+# # Save the array to a file
+# np.save('result.npy', result)
