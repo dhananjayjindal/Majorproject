@@ -3,10 +3,10 @@ from mealpy.optimizer import Optimizer
 
 optimizer = Optimizer()
 
-lowerbound = [0, 0,0]
-upperbound = [1, 1,1]
+lowerbound = [0, 0]
+upperbound = [5, 5]
 
-T = 5000
+T = 1000
 N = 1000
 # optimum_given = float("inf")
 Dim = len(lowerbound)
@@ -26,14 +26,17 @@ def franctional_constraints(a, b, tpe, value):
 
 
 def not_in_range(lowerbound, upperbound, x):
-    c_1_n = 0.1073*x[0] + 0.0737*x[1] + 0.0627*x[2]
+    c_1_n = 2 * x[0] + x[1]
     c_1_d = 1
-    c_2_n = x[0] +  x[1] + x[2]
+    c_2_n = x[0] + 3 * x[1]
     c_2_d = 1
-    c_3_n = x[0] +  x[1] + x[2]
-    c_3_d = 1
-    if franctional_constraints(c_1_n, c_1_d, "ge", .065) or franctional_constraints(
-        c_2_n, c_2_d, "ge", 0.95  ) or franctional_constraints(c_3_n, c_3_d, "le", 1.05):
+    # c_3_n = x[0] + x[1] + x[2]
+    # c_3_d = 1
+    if (
+        franctional_constraints(c_1_n, c_1_d, "ge", 6)
+        or franctional_constraints(c_2_n, c_2_d, "ge", 8)
+        # or franctional_constraints(c_3_n, c_3_d, "le", 1.01)
+    ):
         return True
 
     for i in range(0, len(lowerbound)):
@@ -44,8 +47,9 @@ def not_in_range(lowerbound, upperbound, x):
 
 
 def fitness_function(x):
-    a = 0.02778*x[0]*x[0] + (2 * 0.00387*x[0]*x[1]) + (2 * 0.00021*x[0]*x[2]) + 0.01112*(x[1]**2) - (2 * 0.00020*x[1]*x[2]) + 0.00115*(x[2]**2)
-    b = 1
+    # a = x.T*Σ*x
+    a = (2 * x[0] + x[1]) ** 2 + 1
+    b = x[0] + 2 * x[1] + 1
     if b == 0:
         return False
     return -a / b
